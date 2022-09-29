@@ -1,5 +1,6 @@
 package com.br.estoque.controller;
 
+import com.br.estoque.model.DTO.EmployeeDTO;
 import com.br.estoque.model.Employee;
 import com.br.estoque.service.EmployeeService;
 import org.springframework.http.HttpStatus;
@@ -19,8 +20,11 @@ public class EmployeeController {
 
         @PostMapping
         @ResponseStatus(HttpStatus.CREATED)
-        public Employee createEmployee(@RequestBody Employee employee){
-            System.out.println(employee.getEmail());
+        public Employee createEmployee(@RequestBody EmployeeDTO employeeDTO){
+            Employee employee = new Employee();
+            employee.setEmail(employeeDTO.getEmail());
+            employee.setFirstName(employeeDTO.getFirst_name());
+            employee.setLastName(employeeDTO.getLast_name());
             return employeeService.saveEmployee(employee);
         }
 
@@ -29,14 +33,14 @@ public class EmployeeController {
             return employeeService.getAllEmployees();
         }
 
-        @GetMapping("{id}")
+        @GetMapping("/{id}")
         public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") long employeeId){
             return employeeService.getEmployeeById(employeeId)
                     .map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
-        @PutMapping("{id}")
+        @PutMapping("/{id}")
         public ResponseEntity<Employee> updateEmployee(@PathVariable("id") long employeeId,
                                                        @RequestBody Employee employee){
             return employeeService.getEmployeeById(employeeId)
@@ -53,7 +57,7 @@ public class EmployeeController {
                     .orElseGet(() -> ResponseEntity.notFound().build());
         }
 
-        @DeleteMapping("{id}")
+        @DeleteMapping("/{id}")
         public ResponseEntity<String> deleteEmployee(@PathVariable("id") long employeeId){
 
             employeeService.deleteEmployee(employeeId);
